@@ -1,5 +1,5 @@
 /*
-Declaration file for the drive locker
+Definition file for the Windows build-in BitLocker wrapper
 */
 
 
