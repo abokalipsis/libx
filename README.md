@@ -1,2 +1,2 @@
 # libx
-Anything which can help to help in software development
+Anything which can help in software development
