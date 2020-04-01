@@ -1,6 +1,6 @@
 
 
-#include "drive_controller.h"
+#include "drive_watcher.h"
 #include <iostream>
 
 
@@ -8,6 +8,18 @@
 #pragma comment(lib, "Wbemuuid.lib")
 #pragma comment(lib, "Cfgmgr32.lib")
 #pragma comment(lib, "Setupapi.lib")
+
+
+// Notification listener
+class CNotificationListener : public CDriveWatcher::INotificationListener
+{
+public:
+	void Notify(const CDriveWatcher::SNotification& oNotification) override
+	{
+		if (oNotification.eType == CDriveWatcher::ENotificationType::DriveArrival)
+			std::cout << "Drive arrived: " << oNotification.chDriveLetter << std::endl;
+	}
+};
 
 
 int main()
@@ -26,20 +38,20 @@ int main()
 	}
 
 
-	// Init bit locker wrapper
-	CDriveController::Instance().Init();
+	// Init watcher
+	CDriveWatcher oWatcher;
+	oWatcher.Init();
 
-	// List all available lockable drives
-	std::list<char> lstLockableDrives = CDriveController::Instance().GetAvailableDriveLetters();
-	for (char chLetter : lstLockableDrives)
-		std::cout << chLetter << std::endl;
+	// Set listener
+	CDriveWatcher::INotificationListenerPtr pListener = CDriveWatcher::INotificationListenerPtr(new CNotificationListener);
+	oWatcher.SetNotificationListener(pListener);
+	oWatcher.Start(); // Starts asynchronously 
+
+	Sleep(10000);
 
 	// Clear
-	CDriveController::Instance().Reset();
-
-
-	// Pause program
-	system("pause");
+	oWatcher.Stop();
+	oWatcher.Reset();
 
 	return 0;
 }

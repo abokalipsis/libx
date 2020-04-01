@@ -26,7 +26,7 @@ int main()
 	}
 
 
-	// Init bit locker wrapper
+	// Init controller
 	CDriveController::Instance().Init();
 
 	// List all available lockable drives
